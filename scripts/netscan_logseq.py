@@ -120,27 +120,26 @@ def output_asn(parsed,ip):
   return str(output_str)
 
 def output(parsed,data):
-  file_exists = exists(parsed.output)
-  if file_exists:
-    print("ERROR: " + parsed.output + " exists, bailing")
-    sys.exit(1)
+    if file_exists := exists(parsed.output):
+        print(f"ERROR: {parsed.output} exists, bailing")
+        sys.exit(1)
 
-  f = open(parsed.output, "a")
+    f = open(parsed.output, "a")
 
-  data_sorted = sorted(data.items(), key=lambda item: socket.inet_aton(item[0]))
-  uuid_str = str(uuid.uuid4()).split('-')[0]
+    data_sorted = sorted(data.items(), key=lambda item: socket.inet_aton(item[0]))
+    uuid_str = str(uuid.uuid4()).split('-')[0]
 
-  for ip in data_sorted:
-    f.write("- ## " + ip[0] + "\n")
+    for ip in data_sorted:
+        f.write(f"- ## {ip[0]}" + "\n")
 
-    # Include ASN info
-    if parsed.asn != False:
-      f.write(output_asn(parsed,ip[0]))
+        # Include ASN info
+        if parsed.asn != False:
+          f.write(output_asn(parsed,ip[0]))
 
-    f.write("\t- ### TCP" + "\n")
-    for port in sorted(data[ip[0]]):
-      f.write("\t\t- TODO [" + ip[0] + ":" + str(port) + "]([[" + uuid_str + " " + ip[0] + " TCP " + str(port) + "]])\n")
-      f.write("\t\t\t- XXX\n")
+        f.write("\t- ### TCP" + "\n")
+        for port in sorted(data[ip[0]]):
+          f.write("\t\t- TODO [" + ip[0] + ":" + str(port) + "]([[" + uuid_str + " " + ip[0] + " TCP " + str(port) + "]])\n")
+          f.write("\t\t\t- XXX\n")
 
 def parse_masscan(file_masscan):
     # Opening JSON file
